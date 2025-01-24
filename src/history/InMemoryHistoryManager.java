@@ -8,15 +8,15 @@ import java.util.List;
 import java.util.Map;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private Node <Task> head;
-    private Node <Task> tail;
-    private final Map <Integer,Node <Task>> taskHistory = new LinkedHashMap<>();
+    private Node<Task> head;
+    private Node<Task> tail;
+    private final Map<Integer, Node<Task>> taskHistory = new LinkedHashMap<>();
 
     @Override
     public void add(Task task) {
-        if (taskHistory.size() == 0){
-            tail= new Node<>(null,task,null);
-            taskHistory.put(task.getId(),tail);
+        if (taskHistory.size() == 0) {
+            tail = new Node<>(null, task, null);
+            taskHistory.put(task.getId(), tail);
             return;
         }
         if (taskHistory.containsKey(task.getId())) {
@@ -34,15 +34,15 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public List<Task> getHistory() {
-        ArrayList <Task> newList = new ArrayList<>();
-        for (Node <Task> taskNode: taskHistory.values()){
+        ArrayList<Task> newList = new ArrayList<>();
+        for (Node<Task> taskNode : taskHistory.values()) {
             newList.add(taskNode.getData());
         }
         return newList;
     }
 
     @Override
-    public void remove (int id){
+    public void remove(int id) {
         removeNode(taskHistory.get(id));
         taskHistory.remove(id);
     }
