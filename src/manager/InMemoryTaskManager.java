@@ -66,7 +66,8 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public boolean createTask(Epic epic) {
+    public boolean createTask(Epic epicNew) {
+        Epic epic = epicNew;
         int taskNumber = counterIncrease();
         epicHashMap.put(taskNumber, epic);
         epic.setId(taskNumber);
@@ -74,22 +75,24 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public boolean createTask(SubTask subtask) {
+    public boolean createTask(SubTask subtaskNew) {
+        SubTask subTask = subtaskNew;
         int taskNumber = counterIncrease();
-        if (taskNumber == subtask.getEpicId()) {
+        if (taskNumber == subTask.getEpicId()) {
             System.out.println("Подзадачу нельзя сделать свойм эпиком");
             return false;
         }
-        subtaskHashMap.put(taskNumber, subtask);
-        subtask.setId(taskNumber);
-        List<Integer> epicSubtaskList = epicHashMap.get(subtask.getEpicId()).getSubTaskIds();
+        subtaskHashMap.put(taskNumber, subTask);
+        subTask.setId(taskNumber);
+        List<Integer> epicSubtaskList = epicHashMap.get(subTask.getEpicId()).getSubTaskIds();
         epicSubtaskList.add(taskNumber);
-        updateEpicStatus(subtask.getEpicId());
+        updateEpicStatus(subTask.getEpicId());
         return true;
     }
 
     @Override
-    public boolean createTask(Task task) {
+    public boolean createTask(Task taskNew) {
+        Task task = taskNew;
         int taskNumber = counterIncrease();
         taskHashMap.put(taskNumber, task);
         task.setId(taskNumber);
@@ -125,14 +128,28 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void taskDelete(int key) {
-        boolean fullTask = taskHashMap.remove(key, taskHashMap.get(key));
-        boolean fullEpic = epicHashMap.remove(key, epicHashMap.get(key));
-        boolean fullSubtask = subtaskHashMap.remove(key, subtaskHashMap.get(key));
-        if (fullTask || fullEpic) {
+        boolean fullTask = taskHashMap.containsKey(key);
+        boolean fullEpic = epicHashMap.containsKey(key);
+        boolean fullSubtask = subtaskHashMap.containsKey(key);
+        if (fullTask) {
+            historyManager.remove(key);
+            taskHashMap.remove(key);
             System.out.println("Объект  удален");
         } else if (fullSubtask) {
-            updateEpicStatus(key);
+            int epicId = subtaskHashMap.get(key).getEpicId();
+            epicHashMap.get(epicId).removeSubTask(key);
+            historyManager.remove(key);
+            subtaskHashMap.remove(key);
+            updateEpicStatus(epicId);
             System.out.println("Объект  удален");
+        } else if (fullEpic) {
+            ArrayList<Integer> epicSubtask = new ArrayList<>(epicHashMap.get(key).getSubTaskIds());
+            for (int id : epicSubtask) {
+                subtaskHashMap.remove(id);
+                historyManager.remove(id);
+            }
+            epicHashMap.remove(key);
+            historyManager.remove(key);
         } else {
             System.out.println("Объект с таким идентификатором нет");
         }

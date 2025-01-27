@@ -15,6 +15,14 @@ public class Epic extends Task {
         return subTaskIds;
     }
 
+    public void removeSubTask ( int id) {
+        for (int i = 0 ; i < subTaskIds.size(); i++){
+            if (id == subTaskIds.get(i)){
+                subTaskIds.remove(i);
+            }
+        }
+    }
+
     public void setSubTaskIds(ArrayList<Integer> subTaskIds) {
         this.subTaskIds = subTaskIds;
     }

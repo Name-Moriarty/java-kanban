@@ -14,7 +14,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
-        if (taskHistory.size() == 0) {
+        if (taskHistory.isEmpty()) {
             tail = new Node<>(null, task, null);
             taskHistory.put(task.getId(), tail);
             return;
@@ -43,8 +43,10 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void remove(int id) {
-        removeNode(taskHistory.get(id));
-        taskHistory.remove(id);
+        if (taskHistory.containsKey(id)) {
+            removeNode(taskHistory.get(id));
+            taskHistory.remove(id);
+        }
     }
 
     public void removeNode(Node<Task> node) {

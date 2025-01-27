@@ -21,7 +21,6 @@ public class Main {
         manager.getEpicHashMap(1);
         manager.getEpicHashMap(2);
         manager.getSubTaskHashMap(3);
-        manager.getTaskHashMap(6);
         System.out.println("История просмотров" + manager.getHistory());
 
         System.out.println("Список всех созданных задач:");
