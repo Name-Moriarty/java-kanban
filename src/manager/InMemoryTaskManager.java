@@ -66,8 +66,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public boolean createTask(Epic epicNew) {
-        Epic epic = epicNew;
+    public boolean createTask(Epic epic) {
         int taskNumber = counterIncrease();
         epicHashMap.put(taskNumber, epic);
         epic.setId(taskNumber);
@@ -75,8 +74,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public boolean createTask(SubTask subtaskNew) {
-        SubTask subTask = subtaskNew;
+    public boolean createTask(SubTask subTask) {
         int taskNumber = counterIncrease();
         if (taskNumber == subTask.getEpicId()) {
             System.out.println("Подзадачу нельзя сделать свойм эпиком");
@@ -91,8 +89,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public boolean createTask(Task taskNew) {
-        Task task = taskNew;
+    public boolean createTask(Task task) {
         int taskNumber = counterIncrease();
         taskHashMap.put(taskNumber, task);
         task.setId(taskNumber);

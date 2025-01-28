@@ -15,8 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HistoryTest {
 
-    private TaskManager manager = Managers.getDefault();
-    private HistoryManager historyManager = Managers.getDefaultHistory();
+    private final TaskManager manager = Managers.getDefault();
+    private final HistoryManager historyManager = Managers.getDefaultHistory();
     private final Task task = new Task("Первая задача", "Это наш первый тест", "NEW");
     private final Task task1 = new Task("Первая задача", "Это наш первый тест", "NEW");
     private final SubTask subTask1 = new SubTask("Первая задача", "Это наш первый тест", 3, "NEW");

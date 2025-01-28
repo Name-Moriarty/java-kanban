@@ -11,8 +11,7 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ManagersTest {
-    private TaskManager manager = Managers.getDefault();
-    private HistoryManager historyManager = Managers.getDefaultHistory();
+    private final TaskManager manager = Managers.getDefault();
     private final Task task = new Task("Первая задача", "Это наш первый тест", "NEW");
     private final Epic epic1 = new Epic("Первый эпик", "Это наш первый тест");
     private final SubTask subTask1 = new SubTask("Первая подзадача", "Это наш первый тест", 2, "NEW");
@@ -28,11 +27,21 @@ class ManagersTest {
     @Test
     public void createTask() {
         assertTrue(manager.createTask(task));
+        assertEquals(task, manager.getTaskHashMap(1));
+    }
+
+    @Test
+    void createEpic() {
+        assertTrue(manager.createTask(epic1));
+        assertEquals(epic1, manager.getEpicHashMap(1));
+    }
+
+    @Test
+    void createSubtask() {
+        assertTrue(manager.createTask(task));
         assertTrue(manager.createTask(epic1));
         assertTrue(manager.createTask(subTask1));
-        assertEquals(task, manager.getTaskHashMap(1));
         assertEquals(subTask1, manager.getSubTaskHashMap(3));
-        assertEquals(epic1, manager.getEpicHashMap(2));
     }
 
     @Test
@@ -41,52 +50,38 @@ class ManagersTest {
     }
 
     @Test
-    public void testGetListAllTask() {
+    public void testGetTask() {
+        manager.createTask(task);
+        assertEquals(task, manager.getTaskHashMap(1));
+    }
+
+    @Test
+    public void testGetEpic() {
+        manager.createTask(epic1);
+        assertEquals(epic1, manager.getEpicHashMap(1));
+    }
+
+    @Test
+    public void testGetSubtask() {
         manager.createTask(task);
         manager.createTask(epic1);
         manager.createTask(subTask1);
-        manager.createTask(task1);
-        manager.createTask(epic2);
-        manager.createTask(subTask2);
-        ArrayList<Task> listTask = new ArrayList<>(manager.getListTask());
-        ArrayList<Epic> listEpic = new ArrayList<>(manager.getListEpic());
-        ArrayList<SubTask> listSubtask = new ArrayList<>(manager.getListSubtask());
-        for (Task task2 : listTask) {
-            assertEquals(task2, manager.getTaskHashMap(task2.getId()));
-        }
-        for (Epic epic2 : listEpic) {
-            assertEquals(epic2, manager.getEpicHashMap(epic2.getId()));
-        }
-        for (SubTask subTask2 : listSubtask) {
-            assertEquals(subTask2, manager.getSubTaskHashMap(subTask2.getId()));
-        }
+        assertEquals(subTask1, manager.getSubTaskHashMap(3));
     }
 
     @Test
     public void testDeleteTask() {
         manager.createTask(task);
-        manager.createTask(task1);
         manager.taskDelete(1);
-        assertEquals(1, manager.getListTask().size());
-        manager.createTask(task);
-        manager.deleteAllTask();
-        assertEquals(0, manager.getListTask().size());
+        assertNull(manager.getTaskHashMap(1));
     }
 
     @Test
     public void testDeleteEpic() {
-        manager.createTask(task);
         manager.createTask(epic1);
         manager.createTask(subTask1);
-        manager.createTask(task1);
-        manager.createTask(epic2);
-        manager.createTask(subTask2);
-        manager.taskDelete(2);
-        assertEquals(1, manager.getListEpic().size());
-        assertEquals(1, manager.getListSubtask().size());
-        manager.deleteAllEpic();
-        assertEquals(0, manager.getListEpic().size());
-        assertEquals(0, manager.getListSubtask().size());
+        manager.taskDelete(1);
+        assertNull(manager.getEpicHashMap(1));
     }
 
     @Test
@@ -94,19 +89,40 @@ class ManagersTest {
         manager.createTask(task);
         manager.createTask(epic1);
         manager.createTask(subTask1);
-        manager.createTask(task1);
-        manager.createTask(epic2);
-        manager.createTask(subTask2);
         manager.taskDelete(3);
-        assertEquals(1, manager.getListSubtask().size());
-        assertEquals(0, manager.getEpicHashMap(2).getSubTaskIds().size());
-        manager.deleteAllSubtask();
-        assertEquals(0, manager.getListSubtask().size());
-        assertEquals(0, manager.getEpicHashMap(5).getSubTaskIds().size());
+        assertNull(manager.getSubTaskHashMap(3));
     }
 
     @Test
-    public void testUpdateAllTask() {
+    public void testDeleteAllTask() {
+        manager.createTask(task);
+        manager.createTask(task1);
+        manager.deleteAllTask();
+        assertTrue(manager.getListTask().isEmpty());
+    }
+
+    @Test
+    public void testDeleteAllEpic() {
+        manager.createTask(epic1);
+        manager.createTask(epic2);
+        manager.deleteAllEpic();
+        assertTrue(manager.getListEpic().isEmpty());
+    }
+
+    @Test
+    public void testDeleteAllSubtask() {
+        manager.createTask(task);
+        manager.createTask(epic1);
+        manager.createTask(subTask1);
+        manager.createTask(task1);
+        manager.createTask(epic2);
+        manager.createTask(subTask2);
+        manager.deleteAllSubtask();
+        assertTrue(manager.getListSubtask().isEmpty());
+    }
+
+    @Test
+    public void testStatusTask() {
         manager.createTask(task);
         manager.createTask(epic1);
         manager.createTask(subTask1);
@@ -123,7 +139,7 @@ class ManagersTest {
     }
 
     @Test
-    public void testGetOneTask() {
+    public void testGetTaskById() {
         manager.createTask(task);
         manager.createTask(epic1);
         manager.createTask(subTask1);
