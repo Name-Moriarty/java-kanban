@@ -57,7 +57,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 BufferedReader br = new BufferedReader(reader);
                 while (br.ready()) {
                     String line = br.readLine();
-                    String one[] = line.split(",");
+                    String one [] = line.split(",");
                     if (one.length > 1) {
                         String type = one[1];
                         if (type.equals("TASK")) {
