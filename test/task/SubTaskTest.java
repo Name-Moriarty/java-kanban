@@ -1,6 +1,6 @@
 package task;
 
-import manager.InMemoryTaskManager;
+import manager.FileBackedTaskManager;
 import manager.Managers;
 import manager.TaskManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,8 +19,8 @@ class SubTaskTest {
     public void setDataEpic() {
         manager = Managers.getDefault();
         epic1 = new Epic("Первая задача", "Это наш первый тест");
-        subTask1 = new SubTask("Первая задача", "Это наш первый тест", 1, "NEW");
-        subTask2 = new SubTask("Вторая задача", "Это наш первый тест", 1, "NEW");
+        subTask1 = new SubTask("Первая задача", "Это наш первый тест", 1, TaskStatus.NEW);
+        subTask2 = new SubTask("Вторая задача", "Это наш первый тест", 1, TaskStatus.NEW);
     }
 
     @Test

@@ -14,8 +14,8 @@ class TaskTest {
 
     @BeforeEach
     public void setData() {
-        task = new Task("Первая задача", "Это наш первый тест", "NEW");
-        task2 = new Task("Вторая задача", "Это наш первый тест", "NEW");
+        task = new Task("Первая задача", "Это наш первый тест", TaskStatus.NEW);
+        task2 = new Task("Вторая задача", "Это наш первый тест", TaskStatus.NEW);
     }
 
     @Test

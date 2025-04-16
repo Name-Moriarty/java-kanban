@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import task.Epic;
 import task.SubTask;
 import task.Task;
+import task.TaskStatus;
 
 import java.util.ArrayList;
 
@@ -17,9 +18,9 @@ public class HistoryTest {
 
     private final TaskManager manager = Managers.getDefault();
     private final HistoryManager historyManager = Managers.getDefaultHistory();
-    private final Task task = new Task("Первая задача", "Это наш первый тест", "NEW");
-    private final Task task1 = new Task("Первая задача", "Это наш первый тест", "NEW");
-    private final SubTask subTask1 = new SubTask("Первая задача", "Это наш первый тест", 3, "NEW");
+    private final Task task = new Task("Первая задача", "Это наш первый тест", TaskStatus.NEW);
+    private final Task task1 = new Task("Первая задача", "Это наш первый тест", TaskStatus.NEW);
+    private final SubTask subTask1 = new SubTask("Первая задача", "Это наш первый тест", 3, TaskStatus.NEW);
     private final Epic epic1 = new Epic("Первая задача", "Это наш первый тест");
 
     @BeforeEach

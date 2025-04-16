@@ -9,13 +9,14 @@ import history.HistoryManager;
 import task.Task;
 import task.Epic;
 import task.SubTask;
+import task.TaskStatus;
 
 public class InMemoryTaskManager implements TaskManager {
     private int taskNumber = 0;
 
-    private final Map<Integer, Task> taskHashMap;
-    private final Map<Integer, Epic> epicHashMap;
-    private final Map<Integer, SubTask> subtaskHashMap;
+    protected final Map<Integer, Task> taskHashMap;
+    protected final Map<Integer, Epic> epicHashMap;
+    protected final Map<Integer, SubTask> subtaskHashMap;
 
     private final HistoryManager historyManager = Managers.getDefaultHistory();
 
@@ -105,7 +106,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void subTaskUpdate(String task, String description, int subtaskId, String status) {
+    public void subTaskUpdate(String task, String description, int subtaskId, TaskStatus status) {
         if (subtaskHashMap.containsKey(subtaskId)) {
             subtaskHashMap.get(subtaskId).setTask(task);
             subtaskHashMap.get(subtaskId).setDescription(description);
@@ -115,7 +116,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void taskUpdate(String task, String description, String status, int idTusk) {
+    public void taskUpdate(String task, String description, TaskStatus status, int idTusk) {
         if (taskHashMap.containsKey(idTusk)) {
             taskHashMap.get(idTusk).setTask(task);
             taskHashMap.get(idTusk).setDescription(description);
@@ -152,25 +153,25 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    private void updateEpicStatus(int epicNumber) {
+    protected void updateEpicStatus(int epicNumber) {
         Epic epic = epicHashMap.get(epicNumber);
         int doneSubtaskCalc = 0;
         int newSubtaskCalc = 0;
         for (Integer number : epic.getSubTaskIds()) {
-            String epicSubtaskStatus = subtaskHashMap.get(number).getStatus();
-            if (epicSubtaskStatus.equals("DONE")) {
+            TaskStatus epicSubtaskStatus = subtaskHashMap.get(number).getStatus();
+            if (epicSubtaskStatus.equals(TaskStatus.DONE)) {
                 doneSubtaskCalc++;
             }
-            if (epicSubtaskStatus.equals("NEW")) {
+            if (epicSubtaskStatus.equals(TaskStatus.NEW)) {
                 newSubtaskCalc++;
             }
         }
         if (doneSubtaskCalc == epic.getSubTaskIds().size()) {
-            epic.setStatus("DONE");
+            epic.setStatus(TaskStatus.DONE);
         } else if (newSubtaskCalc == epic.getSubTaskIds().size() || epic.getSubTaskIds().isEmpty()) {
-            epic.setStatus("NEW");
+            epic.setStatus(TaskStatus.NEW);
         } else {
-            epic.setStatus("IN_PROGRESS");
+            epic.setStatus(TaskStatus.IN_PROGRESS);
         }
     }
 
@@ -227,5 +228,13 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<Task> getHistory() {
         return historyManager.getHistory();
+    }
+
+    @Override
+    public void save() {
+    }
+
+    @Override
+    public void reader() {
     }
 }

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import task.Epic;
 import task.SubTask;
 import task.Task;
+import task.TaskStatus;
 
 import java.util.ArrayList;
 
@@ -12,16 +13,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ManagersTest {
     private final TaskManager manager = Managers.getDefault();
-    private final Task task = new Task("Первая задача", "Это наш первый тест", "NEW");
+    private final Task task = new Task("Первая задача", "Это наш первый тест", TaskStatus.NEW);
     private final Epic epic1 = new Epic("Первый эпик", "Это наш первый тест");
-    private final SubTask subTask1 = new SubTask("Первая подзадача", "Это наш первый тест", 2, "NEW");
-    private final Task task1 = new Task("Вторая задача", "Это наш первый тест", "NEW");
+    private final SubTask subTask1 = new SubTask("Первая подзадача", "Это наш первый тест", 2, TaskStatus.NEW);
+    private final Task task1 = new Task("Вторая задача", "Это наш первый тест", TaskStatus.NEW);
     private final Epic epic2 = new Epic("Второй эпик", "Это наш первый тест");
-    private final SubTask subTask2 = new SubTask("Вторая подзадача", "Это наш первый тест", 5, "NEW");
+    private final SubTask subTask2 = new SubTask("Вторая подзадача", "Это наш первый тест", 5, TaskStatus.NEW);
 
     @Test
     public void managers() {
-        assertEquals(InMemoryTaskManager.class, manager.getClass());
+        assertEquals(FileBackedTaskManager.class, manager.getClass());
     }
 
     @Test
@@ -129,11 +130,11 @@ class ManagersTest {
         manager.createTask(task1);
         manager.createTask(epic2);
         manager.createTask(subTask2);
-        manager.taskUpdate("Первая задача Выполнена", "Это наш первый тест", "DONE", 1);
-        assertEquals("DONE", task.getStatus());
-        manager.subTaskUpdate("Первая подзадача", "Это наш первый тест", 3, "DONE");
-        assertEquals("DONE", subTask1.getStatus());
-        assertEquals("DONE", epic1.getStatus());
+        manager.taskUpdate("Первая задача Выполнена", "Это наш первый тест", TaskStatus.DONE, 1);
+        assertEquals(TaskStatus.DONE, task.getStatus());
+        manager.subTaskUpdate("Первая подзадача", "Это наш первый тест", 3, TaskStatus.DONE);
+        assertEquals(TaskStatus.DONE, subTask1.getStatus());
+        assertEquals(TaskStatus.DONE, epic1.getStatus());
         manager.epicUpdate("Второй эпик выполнен", "Это наш первый тест", 5);
         assertEquals("Второй эпик выполнен", epic2.getTask());
     }
