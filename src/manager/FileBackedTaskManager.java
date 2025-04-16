@@ -57,24 +57,24 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 BufferedReader br = new BufferedReader(reader);
                 while (br.ready()) {
                     String line = br.readLine();
-                    String one [] = line.split(",");
-                    if (one.length > 1) {
-                        String type = one[1];
+                    String lineSplit [] = line.split(",");
+                    if (lineSplit.length > 1) {
+                        String type = lineSplit[1];
                         if (type.equals("TASK")) {
-                            Task task = new Task(one[2], one[4], TaskStatus.NEW);
-                            task.setId(Integer.parseInt(one[0]));
+                            Task task = new Task(lineSplit[2], lineSplit[4], TaskStatus.NEW);
+                            task.setId(Integer.parseInt(lineSplit[0]));
                             createTaskReadersFiles(task);
                         } else if (type.equals(TaskType.EPIC.toString())) {
-                            Epic epic = new Epic(one[2], one[4]);
-                            epic.setId(Integer.parseInt(one[0]));
+                            Epic epic = new Epic(lineSplit[2], lineSplit[4]);
+                            epic.setId(Integer.parseInt(lineSplit[0]));
                             createTaskReadersFiles(epic);
                         } else if (type.equals(TaskType.SUBTASK.toString())) {
-                            SubTask subTask = new SubTask(one[2], one[4], Integer.parseInt(one[5]), TaskStatus.NEW);
-                            subTask.setId(Integer.parseInt(one[0]));
+                            SubTask subTask = new SubTask(lineSplit[2], lineSplit[4], Integer.parseInt(lineSplit[5]), TaskStatus.NEW);
+                            subTask.setId(Integer.parseInt(lineSplit[0]));
                             createTaskReadersFiles(subTask);
                         } else {
-                            if (one != null) {
-                                for (int i = one.length; i > 0; i--) {
+                            if (lineSplit != null) {
+                                for (int i = lineSplit.length; i > 0; i--) {
                                     if (epicHashMap.containsKey(i)) {
                                         getEpicHashMap(i);
                                     }
