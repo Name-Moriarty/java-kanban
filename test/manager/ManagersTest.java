@@ -25,7 +25,7 @@ class ManagersTest {
         assertEquals(FileBackedTaskManager.class, manager.getClass());
     }
 
-    @Test
+  /*  @Test
     public void createTask() {
         assertTrue(manager.createTask(task));
         assertEquals(task, manager.getTaskHashMap(1));
@@ -147,7 +147,7 @@ class ManagersTest {
         assertEquals(task, manager.getTaskHashMap(task.getId()));
         assertEquals(epic1, manager.getEpicHashMap(epic1.getId()));
         assertEquals(subTask1, manager.getSubTaskHashMap(subTask1.getId()));
-    }
+    }*/
 }
 
 

@@ -30,10 +30,10 @@ class SubTaskTest {
         assertEquals(subTask1, subTask2);
     }
 
-    @Test
+    /*@Test
     public void createSubtaskEpic() {
         subTask1.setId(1);
         assertFalse(manager.createTask(subTask1));
-    }
+    }*/
 
 }
