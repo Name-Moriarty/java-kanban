@@ -2,12 +2,9 @@ package manager;
 
 
 import task.Epic;
-
 import task.SubTask;
-
 import task.Task;
 import task.TaskStatus;
-
 
 import java.util.List;
 
@@ -51,9 +48,5 @@ public interface TaskManager {
     SubTask getSubTaskHashMap(int key);
 
     List<Task> getHistory();
-
-    public void save();
-
-    public void reader();
 }
 

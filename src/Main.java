@@ -1,10 +1,13 @@
-import task.*;
-import manager.*;
+import manager.Managers;
+import manager.TaskManager;
+import task.Epic;
+import task.SubTask;
+import task.Task;
+import task.TaskStatus;
 
 public class Main {
     public static void main(String[] args) {
         TaskManager manager = Managers.getDefault();
-        manager.reader();
         Epic epic1 = new Epic("Помыть машину", "Это будет весело");
         Epic epic2 = new Epic("Выучить java", "учиться в Yandex");
         SubTask subtask = new SubTask("Мыть машину", "Налить воду в ведро ", 1, TaskStatus.NEW);

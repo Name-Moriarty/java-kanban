@@ -1,33 +1,31 @@
 package manager;
 
+import history.HistoryManager;
+import task.Epic;
+import task.SubTask;
+import task.Task;
+import task.TaskStatus;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import history.HistoryManager;
-import task.Task;
-import task.Epic;
-import task.SubTask;
-import task.TaskStatus;
-
 public class InMemoryTaskManager implements TaskManager {
     private int taskNumber = 0;
 
-    protected final Map<Integer, Task> taskHashMap;
-    protected final Map<Integer, Epic> epicHashMap;
-    protected final Map<Integer, SubTask> subtaskHashMap;
+    protected final Map<Integer, Task> taskHashMap = new HashMap<>();
+    ;
+    protected final Map<Integer, Epic> epicHashMap = new HashMap<>();
+    ;
+    protected final Map<Integer, SubTask> subtaskHashMap = new HashMap<>();
+    ;
 
-    private final HistoryManager historyManager = Managers.getDefaultHistory();
-
-    public InMemoryTaskManager() {
-        taskHashMap = new HashMap<>();
-        epicHashMap = new HashMap<>();
-        subtaskHashMap = new HashMap<>();
-    }
+    protected final HistoryManager historyManager = Managers.getDefaultHistory();
 
     @Override
     public int counterIncrease() {
+        taskNumber = taskHashMap.size() + epicHashMap.size() + subtaskHashMap.size();
         return ++taskNumber;
     }
 
@@ -69,8 +67,8 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public boolean createTask(Epic epic) {
         int taskNumber = counterIncrease();
-        epicHashMap.put(taskNumber, epic);
         epic.setId(taskNumber);
+        epicHashMap.put(taskNumber, epic);
         return true;
     }
 
@@ -81,8 +79,8 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.println("Подзадачу нельзя сделать свойм эпиком");
             return false;
         }
-        subtaskHashMap.put(taskNumber, subTask);
         subTask.setId(taskNumber);
+        subtaskHashMap.put(taskNumber, subTask);
         List<Integer> epicSubtaskList = epicHashMap.get(subTask.getEpicId()).getSubTaskIds();
         epicSubtaskList.add(taskNumber);
         updateEpicStatus(subTask.getEpicId());
@@ -92,8 +90,8 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public boolean createTask(Task task) {
         int taskNumber = counterIncrease();
-        taskHashMap.put(taskNumber, task);
         task.setId(taskNumber);
+        taskHashMap.put(taskNumber, task);
         return true;
     }
 
@@ -228,13 +226,5 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<Task> getHistory() {
         return historyManager.getHistory();
-    }
-
-    @Override
-    public void save() {
-    }
-
-    @Override
-    public void reader() {
     }
 }

@@ -1,18 +1,32 @@
 package manager;
 
-import task.*;
+import task.Epic;
+import task.SubTask;
+import task.Task;
+import task.TaskStatus;
+import task.TaskType;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.List;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
+    private File file;
 
-    @Override
+    public FileBackedTaskManager() {
+        super();
+        this.file = new File("C:\\Users\\dvoeg\\IdeaProjects\\java-kanban-7-sprint", "DataSave.csv");
+    }
+
     public void save() {
-        try {
-            File file = new File("DataSave.csv");
-            file.delete();
-            Writer files = new FileWriter("DataSave.csv", true);
+        file.delete();
+        try (Writer files = new FileWriter(file, true)) {
             for (Task task : taskHashMap.values()) {
                 String name = task.toString();
                 files.write(name + "\n");
@@ -42,19 +56,16 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     }
                 }
             }
-            files.close();
         } catch (IOException exp) {
             throw new ManagerSaveException(exp);
         }
     }
 
-    @Override
-    public void reader() {
-        File file = new File("C:\\Users\\dvoeg\\IdeaProjects\\java-kanban-7-sprint", "DataSave.csv");
+    public static FileBackedTaskManager loadFromFile(File file) {
+        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager();
         if (file.isFile()) {
-            try {
-                Reader reader = new FileReader("DataSave.csv");
-                BufferedReader br = new BufferedReader(reader);
+            try (Reader reader = new FileReader(file);
+                 BufferedReader br = new BufferedReader(reader)) {
                 while (br.ready()) {
                     String line = br.readLine();
                     String[] lineSplit = line.split(",");
@@ -63,53 +74,57 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         if (type.equals("TASK")) {
                             Task task = new Task(lineSplit[2], lineSplit[4], TaskStatus.NEW);
                             task.setId(Integer.parseInt(lineSplit[0]));
-                            createTaskReadersFiles(task);
+                            fileBackedTaskManager.taskHashMap.put(Integer.parseInt(lineSplit[0]), task);
+                            ;
                         } else if (type.equals(TaskType.EPIC.toString())) {
                             Epic epic = new Epic(lineSplit[2], lineSplit[4]);
                             epic.setId(Integer.parseInt(lineSplit[0]));
-                            createTaskReadersFiles(epic);
+                            fileBackedTaskManager.epicHashMap.put(Integer.parseInt(lineSplit[0]), epic);
                         } else if (type.equals(TaskType.SUBTASK.toString())) {
                             SubTask subTask = new SubTask(lineSplit[2], lineSplit[4], Integer.parseInt(lineSplit[5]), TaskStatus.NEW);
                             subTask.setId(Integer.parseInt(lineSplit[0]));
-                            createTaskReadersFiles(subTask);
+                            fileBackedTaskManager.subtaskHashMap.put(Integer.parseInt(lineSplit[0]), subTask);
+                            List<Integer> epicSubtaskList = fileBackedTaskManager.epicHashMap.get(subTask.getEpicId()).getSubTaskIds();
+                            epicSubtaskList.add(Integer.parseInt(lineSplit[0]));
                         } else {
                             if (lineSplit != null) {
                                 for (int i = lineSplit.length; i > 0; i--) {
-                                    if (epicHashMap.containsKey(i)) {
-                                        getEpicHashMap(i);
+                                    if (fileBackedTaskManager.epicHashMap.containsKey(i)) {
+                                        fileBackedTaskManager.historyManager.add(fileBackedTaskManager.epicHashMap.get(i));
                                     }
-                                    if (taskHashMap.containsKey(i)) {
-                                        getTaskHashMap(i);
+                                    if (fileBackedTaskManager.taskHashMap.containsKey(i)) {
+                                        fileBackedTaskManager.historyManager.add(fileBackedTaskManager.taskHashMap.get(i));
                                     }
-                                    if (subtaskHashMap.containsKey(i)) {
-                                        getSubTaskHashMap(i);
+                                    if (fileBackedTaskManager.subtaskHashMap.containsKey(i)) {
+                                        fileBackedTaskManager.historyManager.add(fileBackedTaskManager.subtaskHashMap.get(i));
                                     }
                                 }
                             }
                         }
                     }
                 }
-                br.close();
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         } else System.out.println("Записи в файл еще не было");
+        return fileBackedTaskManager;
     }
+
 
     @Override
     public boolean createTask(Task task) {
-        super.createTask(task);
+        boolean createStatus = super.createTask(task);
         save();
-        return true;
+        return createStatus;
     }
 
     @Override
     public boolean createTask(Epic epic) {
-        boolean result = super.createTask(epic);
+        boolean createStatus = super.createTask(epic);
         save();
-        return result;
+        return createStatus;
     }
 
     @Override
@@ -117,26 +132,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         boolean createStatus = super.createTask(subTask);
         save();
         return createStatus;
-    }
-
-    public boolean createTaskReadersFiles(Task task) {
-        taskHashMap.put(task.getId(), task);
-        counterIncrease();
-        return true;
-    }
-
-    public boolean createTaskReadersFiles(Epic epic) {
-        epicHashMap.put(epic.getId(), epic);
-        counterIncrease();
-        return true;
-    }
-
-    public boolean createTaskReadersFiles(SubTask subtask) {
-        subtaskHashMap.put(subtask.getId(), subtask);
-        List<Integer> epicSubtaskList = epicHashMap.get(subtask.getEpicId()).getSubTaskIds();
-        epicSubtaskList.add(subtask.getId());
-        super.updateEpicStatus(subtask.getEpicId());
-        return true;
     }
 
     @Override
