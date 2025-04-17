@@ -1,5 +1,6 @@
 package history;
 
+import manager.InMemoryTaskManager;
 import manager.Managers;
 import manager.TaskManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,14 +10,12 @@ import task.SubTask;
 import task.Task;
 import task.TaskStatus;
 
-import java.util.ArrayList;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class HistoryTest {
 
-    private final TaskManager manager = Managers.getDefault();
+    private final TaskManager manager = new InMemoryTaskManager();
     private final HistoryManager historyManager = Managers.getDefaultHistory();
     private final Task task = new Task("Первая задача", "Это наш первый тест", TaskStatus.NEW);
     private final Task task1 = new Task("Первая задача", "Это наш первый тест", TaskStatus.NEW);
@@ -31,7 +30,7 @@ public class HistoryTest {
         manager.createTask(subTask1);
     }
 
-    /*@Test
+    @Test
     public void historyManager() {
         assertEquals(InMemoryHistoryManager.class, historyManager.getClass());
     }
@@ -64,5 +63,5 @@ public class HistoryTest {
         manager.getTaskHashMap(2);
         manager.getEpicHashMap(3);
         assertNotNull(manager.getHistory());
-    }*/
+    }
 }

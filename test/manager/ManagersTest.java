@@ -1,18 +1,18 @@
 package manager;
 
-import history.*;
 import org.junit.jupiter.api.Test;
 import task.Epic;
 import task.SubTask;
 import task.Task;
 import task.TaskStatus;
 
-import java.util.ArrayList;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ManagersTest {
-    private final TaskManager manager = Managers.getDefault();
+    private final TaskManager manager = new InMemoryTaskManager();
+    private final TaskManager managerFiles = Managers.getDefault();
     private final Task task = new Task("Первая задача", "Это наш первый тест", TaskStatus.NEW);
     private final Epic epic1 = new Epic("Первый эпик", "Это наш первый тест");
     private final SubTask subTask1 = new SubTask("Первая подзадача", "Это наш первый тест", 2, TaskStatus.NEW);
@@ -22,10 +22,10 @@ class ManagersTest {
 
     @Test
     public void managers() {
-        assertEquals(FileBackedTaskManager.class, manager.getClass());
+        assertEquals(FileBackedTaskManager.class, managerFiles.getClass());
     }
 
-  /*  @Test
+    @Test
     public void createTask() {
         assertTrue(manager.createTask(task));
         assertEquals(task, manager.getTaskHashMap(1));
@@ -147,7 +147,7 @@ class ManagersTest {
         assertEquals(task, manager.getTaskHashMap(task.getId()));
         assertEquals(epic1, manager.getEpicHashMap(epic1.getId()));
         assertEquals(subTask1, manager.getSubTaskHashMap(subTask1.getId()));
-    }*/
+    }
 }
 
 
