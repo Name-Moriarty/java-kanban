@@ -1,12 +1,12 @@
 package task;
 
 import manager.InMemoryTaskManager;
-import manager.Managers;
 import manager.TaskManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class SubTaskTest {
 
@@ -17,10 +17,10 @@ class SubTaskTest {
 
     @BeforeEach
     public void setDataEpic() {
-        manager = Managers.getDefault();
+        manager = new InMemoryTaskManager();
         epic1 = new Epic("Первая задача", "Это наш первый тест");
-        subTask1 = new SubTask("Первая задача", "Это наш первый тест", 1, "NEW");
-        subTask2 = new SubTask("Вторая задача", "Это наш первый тест", 1, "NEW");
+        subTask1 = new SubTask("Первая задача", "Это наш первый тест", 1, TaskStatus.NEW);
+        subTask2 = new SubTask("Вторая задача", "Это наш первый тест", 1, TaskStatus.NEW);
     }
 
     @Test
@@ -35,5 +35,4 @@ class SubTaskTest {
         subTask1.setId(1);
         assertFalse(manager.createTask(subTask1));
     }
-
 }

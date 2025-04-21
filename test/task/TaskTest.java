@@ -1,11 +1,9 @@
 package task;
 
-import manager.InMemoryTaskManager;
-import manager.Managers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TaskTest {
 
@@ -14,8 +12,8 @@ class TaskTest {
 
     @BeforeEach
     public void setData() {
-        task = new Task("Первая задача", "Это наш первый тест", "NEW");
-        task2 = new Task("Вторая задача", "Это наш первый тест", "NEW");
+        task = new Task("Первая задача", "Это наш первый тест", TaskStatus.NEW);
+        task2 = new Task("Вторая задача", "Это наш первый тест", TaskStatus.NEW);
     }
 
     @Test

@@ -1,12 +1,11 @@
 package task;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import manager.InMemoryTaskManager;
-import manager.Managers;
 import manager.TaskManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EpicTest {
 
@@ -16,13 +15,11 @@ public class EpicTest {
 
     @BeforeEach
     public void setDataEpic() {
-        manager = Managers.getDefault();
+        manager = new InMemoryTaskManager();
         epic1 = new Epic("Первая задача", "Это наш первый тест");
         epic2 = new Epic("Вторая задача", "Это наш первый тест номер 2 ");
     }
 
-    // У меня нет возможности эпик сделать своей подзадачей так-как подзадача привязывается при её созданий
-    // и передается там объект самой подзадачи.
     @Test
     public void taskEualsEpicFalse() {
         epic1.setId(1);

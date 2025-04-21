@@ -1,32 +1,27 @@
 package manager;
 
+import history.HistoryManager;
+import task.Epic;
+import task.SubTask;
+import task.Task;
+import task.TaskStatus;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import history.HistoryManager;
-import task.Task;
-import task.Epic;
-import task.SubTask;
-
 public class InMemoryTaskManager implements TaskManager {
     private int taskNumber = 0;
 
-    private final Map<Integer, Task> taskHashMap;
-    private final Map<Integer, Epic> epicHashMap;
-    private final Map<Integer, SubTask> subtaskHashMap;
-
-    private final HistoryManager historyManager = Managers.getDefaultHistory();
-
-    public InMemoryTaskManager() {
-        taskHashMap = new HashMap<>();
-        epicHashMap = new HashMap<>();
-        subtaskHashMap = new HashMap<>();
-    }
+    protected final Map<Integer, Task> taskHashMap = new HashMap<>();
+    protected final Map<Integer, Epic> epicHashMap = new HashMap<>();
+    protected final Map<Integer, SubTask> subtaskHashMap = new HashMap<>();
+    protected final HistoryManager historyManager = Managers.getDefaultHistory();
 
     @Override
     public int counterIncrease() {
+        taskNumber = taskHashMap.size() + epicHashMap.size() + subtaskHashMap.size();
         return ++taskNumber;
     }
 
@@ -68,8 +63,8 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public boolean createTask(Epic epic) {
         int taskNumber = counterIncrease();
-        epicHashMap.put(taskNumber, epic);
         epic.setId(taskNumber);
+        epicHashMap.put(taskNumber, epic);
         return true;
     }
 
@@ -80,8 +75,8 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.println("Подзадачу нельзя сделать свойм эпиком");
             return false;
         }
-        subtaskHashMap.put(taskNumber, subTask);
         subTask.setId(taskNumber);
+        subtaskHashMap.put(taskNumber, subTask);
         List<Integer> epicSubtaskList = epicHashMap.get(subTask.getEpicId()).getSubTaskIds();
         epicSubtaskList.add(taskNumber);
         updateEpicStatus(subTask.getEpicId());
@@ -91,8 +86,8 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public boolean createTask(Task task) {
         int taskNumber = counterIncrease();
-        taskHashMap.put(taskNumber, task);
         task.setId(taskNumber);
+        taskHashMap.put(taskNumber, task);
         return true;
     }
 
@@ -105,7 +100,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void subTaskUpdate(String task, String description, int subtaskId, String status) {
+    public void subTaskUpdate(String task, String description, int subtaskId, TaskStatus status) {
         if (subtaskHashMap.containsKey(subtaskId)) {
             subtaskHashMap.get(subtaskId).setTask(task);
             subtaskHashMap.get(subtaskId).setDescription(description);
@@ -115,7 +110,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void taskUpdate(String task, String description, String status, int idTusk) {
+    public void taskUpdate(String task, String description, TaskStatus status, int idTusk) {
         if (taskHashMap.containsKey(idTusk)) {
             taskHashMap.get(idTusk).setTask(task);
             taskHashMap.get(idTusk).setDescription(description);
@@ -152,25 +147,25 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    private void updateEpicStatus(int epicNumber) {
+    protected void updateEpicStatus(int epicNumber) {
         Epic epic = epicHashMap.get(epicNumber);
         int doneSubtaskCalc = 0;
         int newSubtaskCalc = 0;
         for (Integer number : epic.getSubTaskIds()) {
-            String epicSubtaskStatus = subtaskHashMap.get(number).getStatus();
-            if (epicSubtaskStatus.equals("DONE")) {
+            TaskStatus epicSubtaskStatus = subtaskHashMap.get(number).getStatus();
+            if (epicSubtaskStatus.equals(TaskStatus.DONE)) {
                 doneSubtaskCalc++;
             }
-            if (epicSubtaskStatus.equals("NEW")) {
+            if (epicSubtaskStatus.equals(TaskStatus.NEW)) {
                 newSubtaskCalc++;
             }
         }
         if (doneSubtaskCalc == epic.getSubTaskIds().size()) {
-            epic.setStatus("DONE");
+            epic.setStatus(TaskStatus.DONE);
         } else if (newSubtaskCalc == epic.getSubTaskIds().size() || epic.getSubTaskIds().isEmpty()) {
-            epic.setStatus("NEW");
+            epic.setStatus(TaskStatus.NEW);
         } else {
-            epic.setStatus("IN_PROGRESS");
+            epic.setStatus(TaskStatus.IN_PROGRESS);
         }
     }
 

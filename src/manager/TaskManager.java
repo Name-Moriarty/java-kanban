@@ -2,11 +2,9 @@ package manager;
 
 
 import task.Epic;
-
 import task.SubTask;
-
 import task.Task;
-
+import task.TaskStatus;
 
 import java.util.List;
 
@@ -35,9 +33,9 @@ public interface TaskManager {
 
     void epicUpdate(String task, String description, int idTusk);
 
-    void subTaskUpdate(String name, String description, int epicId, String status);
+    void subTaskUpdate(String name, String description, int epicId, TaskStatus status);
 
-    void taskUpdate(String task, String description, String status, int idTusk);
+    void taskUpdate(String task, String description, TaskStatus status, int idTusk);
 
     void taskDelete(int key);
 
@@ -50,6 +48,5 @@ public interface TaskManager {
     SubTask getSubTaskHashMap(int key);
 
     List<Task> getHistory();
-
 }
 
