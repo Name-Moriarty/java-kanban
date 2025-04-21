@@ -25,18 +25,6 @@ public class FileBackedTaskManagerTest {
     private final SubTask subTask2 = new SubTask("Вторая подзадача", "Это наш первый тест", 5, TaskStatus.NEW);
 
     @Test
-    public void saveEmptyFile() {
-        try {
-            File newFile = File.createTempFile("Test.csv", null);
-            managerFiles.save();
-            assertEquals(newFile.length(), 0);
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Test
     public void saveFile() {
         try {
             File newFile = File.createTempFile("Test.csv", null);
