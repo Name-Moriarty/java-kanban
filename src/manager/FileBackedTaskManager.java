@@ -56,8 +56,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     }
                 }
             }
-        } catch (IOException exp) {
-            throw new ManagerSaveException(exp);
+        } catch (IOException saveException) {
+            throw new ManagerSaveException(saveException);
         }
     }
 
@@ -71,11 +71,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     String[] lineSplit = line.split(",");
                     if (lineSplit.length > 1) {
                         String type = lineSplit[1];
-                        if (type.equals("TASK")) {
+                        if (type.equals(TaskType.TASK.toString())) {
                             Task task = new Task(lineSplit[2], lineSplit[4], TaskStatus.NEW);
                             task.setId(Integer.parseInt(lineSplit[0]));
                             fileBackedTaskManager.taskHashMap.put(Integer.parseInt(lineSplit[0]), task);
-                            ;
                         } else if (type.equals(TaskType.EPIC.toString())) {
                             Epic epic = new Epic(lineSplit[2], lineSplit[4]);
                             epic.setId(Integer.parseInt(lineSplit[0]));
