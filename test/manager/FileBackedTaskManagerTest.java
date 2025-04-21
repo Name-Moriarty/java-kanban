@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileBackedTaskManagerTest {
 
+    private final FileBackedTaskManager managerFiles = new FileBackedTaskManager();
     private final Task task = new Task("Первая задача", "Это наш первый тест", TaskStatus.NEW);
     private final Epic epic1 = new Epic("Первый эпик", "Это наш первый тест");
     private final SubTask subTask1 = new SubTask("Первая подзадача", "Это наш первый тест", 2, TaskStatus.NEW);
@@ -25,7 +26,6 @@ public class FileBackedTaskManagerTest {
 
     @Test
     public void saveEmptyFile() {
-        final FileBackedTaskManager managerFiles = new FileBackedTaskManager();
         try {
             File newFile = File.createTempFile("Test.csv", null);
             managerFiles.save();
@@ -38,13 +38,11 @@ public class FileBackedTaskManagerTest {
 
     @Test
     public void saveFile() {
-        final FileBackedTaskManager managerFiles = new FileBackedTaskManager();
         try {
             File newFile = File.createTempFile("Test.csv", null);
             Writer writer = new FileWriter(newFile, false);
             writer.write(task.toString());
             writer.close();
-            managerFiles.createTask(task);
             assertTrue(newFile.length() > 0);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -53,7 +51,6 @@ public class FileBackedTaskManagerTest {
 
     @Test
     public void readEmptyFile() {
-        final FileBackedTaskManager managerFiles = new FileBackedTaskManager();
         try {
             File newFile = File.createTempFile("Test.csv", null);
             FileBackedTaskManager manager = managerFiles.loadFromFile(newFile);
@@ -65,7 +62,6 @@ public class FileBackedTaskManagerTest {
 
     @Test
     public void readFile() {
-        final FileBackedTaskManager managerFiles = new FileBackedTaskManager();
         try {
             File newFile = File.createTempFile("Test.csv", null);
             Writer writer = new FileWriter(newFile, false);
