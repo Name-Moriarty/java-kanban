@@ -89,7 +89,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                             fileBackedTaskManager.subtaskHashMap.put(Integer.parseInt(lineSplit[0]), subTask);
                             List<Integer> epicSubtaskList = fileBackedTaskManager.epicHashMap.get(subTask.getEpicId()).getSubTaskIds();
                             epicSubtaskList.add(Integer.parseInt(lineSplit[0]));
-                            fileBackedTaskManager.EpicTimeEpdate(fileBackedTaskManager.epicHashMap.get((Integer.parseInt(lineSplit[5]))));
+                            fileBackedTaskManager.epicTimeEpdate(fileBackedTaskManager.epicHashMap.get((Integer.parseInt(lineSplit[5]))));
                         } else {
                             if (lineSplit != null) {
                                 for (int i = lineSplit.length; i > 0; i--) {

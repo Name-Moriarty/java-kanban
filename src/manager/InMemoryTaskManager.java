@@ -84,7 +84,7 @@ public class InMemoryTaskManager implements TaskManager {
             epicSubtaskList.add(taskNumber);
             updateEpicStatus(subTask.getEpicId());
             if (subTask.getStartTime() != null) {
-                EpicTimeEpdate(epicHashMap.get(subTask.getEpicId()));
+                epicTimeEpdate(epicHashMap.get(subTask.getEpicId()));
             }
             return true;
         }
@@ -259,7 +259,7 @@ public class InMemoryTaskManager implements TaskManager {
         return Optional.of(task);
     }
 
-    protected void EpicTimeEpdate(Epic epic) {
+    protected void epicTimeEpdate(Epic epic) {
         epic.setDuration(Duration.ofMinutes(0));
         ArrayList<Integer> idSub = epic.getSubTaskIds();
         for (int i : idSub) {
