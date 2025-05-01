@@ -7,7 +7,7 @@ import java.io.File;
 
 public abstract class Managers {
     public static TaskManager getDefault() {
-        return FileBackedTaskManager.loadFromFile(new File("C:\\Users\\dvoeg\\IdeaProjects\\java-kanban-7-sprint", "DataSave.csv"));
+        return FileBackedTaskManager.loadFromFile(new File("DataSave.csv"));
     }
 
     public static HistoryManager getDefaultHistory() {

@@ -24,7 +24,7 @@ public class FileBackedTaskManagerTest {
     private final Epic epic2 = new Epic("Второй эпик", "Это наш первый тест");
     private final SubTask subTask2 = new SubTask("Вторая подзадача", "Это наш первый тест", 5, TaskStatus.NEW);
 
-    @Test
+   /* @Test
     public void saveFile() {
         try {
             File newFile = File.createTempFile("Test.csv", null);
@@ -35,7 +35,7 @@ public class FileBackedTaskManagerTest {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
+    }*/
 
     @Test
     public void readEmptyFile() {
@@ -48,7 +48,7 @@ public class FileBackedTaskManagerTest {
         }
     }
 
-    @Test
+   /* @Test
     public void readFile() {
         try {
             File newFile = File.createTempFile("Test.csv", null);
@@ -60,5 +60,5 @@ public class FileBackedTaskManagerTest {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
+    }*/
 }

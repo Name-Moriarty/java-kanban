@@ -14,14 +14,18 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private File file;
 
     public FileBackedTaskManager() {
         super();
-        this.file = new File("C:\\Users\\dvoeg\\IdeaProjects\\java-kanban-7-sprint", "DataSave.csv");
+        this.file = new File("DataSave.csv");
     }
 
     public void save() {
@@ -72,7 +76,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     if (lineSplit.length > 1) {
                         String type = lineSplit[1];
                         if (type.equals(TaskType.TASK.toString())) {
-                            Task task = new Task(lineSplit[2], lineSplit[4], TaskStatus.NEW);
+                            Task task = new Task(lineSplit[2], lineSplit[4], TaskStatus.NEW, LocalDateTime.parse(lineSplit[5]), Duration.ofMinutes(Integer.parseInt(lineSplit[6])));
                             task.setId(Integer.parseInt(lineSplit[0]));
                             fileBackedTaskManager.taskHashMap.put(Integer.parseInt(lineSplit[0]), task);
                         } else if (type.equals(TaskType.EPIC.toString())) {
@@ -80,11 +84,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                             epic.setId(Integer.parseInt(lineSplit[0]));
                             fileBackedTaskManager.epicHashMap.put(Integer.parseInt(lineSplit[0]), epic);
                         } else if (type.equals(TaskType.SUBTASK.toString())) {
-                            SubTask subTask = new SubTask(lineSplit[2], lineSplit[4], Integer.parseInt(lineSplit[5]), TaskStatus.NEW);
+                            SubTask subTask = new SubTask(lineSplit[2], lineSplit[4], Integer.parseInt(lineSplit[5]), TaskStatus.NEW, LocalDateTime.parse(lineSplit[6]), Duration.ofMinutes(Integer.parseInt(lineSplit[7])));
                             subTask.setId(Integer.parseInt(lineSplit[0]));
                             fileBackedTaskManager.subtaskHashMap.put(Integer.parseInt(lineSplit[0]), subTask);
                             List<Integer> epicSubtaskList = fileBackedTaskManager.epicHashMap.get(subTask.getEpicId()).getSubTaskIds();
                             epicSubtaskList.add(Integer.parseInt(lineSplit[0]));
+                            fileBackedTaskManager.EpicTimeEpdate(fileBackedTaskManager.epicHashMap.get((Integer.parseInt(lineSplit[5]))));
                         } else {
                             if (lineSplit != null) {
                                 for (int i = lineSplit.length; i > 0; i--) {
@@ -109,6 +114,28 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             }
         } else System.out.println("Записи в файл еще не было");
         return fileBackedTaskManager;
+    }
+
+    @Override
+    public Optional<ArrayList<Task>> getPrioritizedTasks() {
+        ArrayList<Task> task = new ArrayList<>(taskHashMap.values());
+        ArrayList<Task> empty = new ArrayList<>();
+        for (Epic epic : epicHashMap.values()) {
+            if (epic.getStartTime() == null) {
+                empty.add(epic);
+            } else {
+                task.add(epic);
+            }
+        }
+
+        for (SubTask subTask : subtaskHashMap.values()) {
+            task.add(subTask);
+        }
+        task.sort(Task::compareTo);
+        for (Task task1 : empty) {
+            task.add(task1);
+        }
+        return Optional.of(task);
     }
 
 

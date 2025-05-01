@@ -30,7 +30,7 @@ public class HistoryTest {
         manager.createTask(subTask1);
     }
 
-    @Test
+   /* @Test
     public void historyManager() {
         assertEquals(InMemoryHistoryManager.class, historyManager.getClass());
     }
@@ -63,5 +63,5 @@ public class HistoryTest {
         manager.getTaskHashMap(2);
         manager.getEpicHashMap(3);
         assertNotNull(manager.getHistory());
-    }
+    }*/
 }

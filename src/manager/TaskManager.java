@@ -6,7 +6,9 @@ import task.SubTask;
 import task.Task;
 import task.TaskStatus;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 public interface TaskManager {
@@ -48,5 +50,7 @@ public interface TaskManager {
     SubTask getSubTaskHashMap(int key);
 
     List<Task> getHistory();
+
+    Optional<ArrayList<Task>> getPrioritizedTasks();
 }
 

@@ -6,10 +6,12 @@ import task.SubTask;
 import task.Task;
 import task.TaskStatus;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class InMemoryTaskManager implements TaskManager {
     private int taskNumber = 0;
@@ -70,25 +72,36 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public boolean createTask(SubTask subTask) {
-        int taskNumber = counterIncrease();
-        if (taskNumber == subTask.getEpicId()) {
-            System.out.println("Подзадачу нельзя сделать свойм эпиком");
-            return false;
+        if (checkTaskDatesInstruction(subTask)) {
+            int taskNumber = counterIncrease();
+            if (taskNumber == subTask.getEpicId()) {
+                System.out.println("Подзадачу нельзя сделать свойм эпиком");
+                return false;
+            }
+            subTask.setId(taskNumber);
+            subtaskHashMap.put(taskNumber, subTask);
+            List<Integer> epicSubtaskList = epicHashMap.get(subTask.getEpicId()).getSubTaskIds();
+            epicSubtaskList.add(taskNumber);
+            updateEpicStatus(subTask.getEpicId());
+            if (subTask.getStartTime() != null) {
+                EpicTimeEpdate(epicHashMap.get(subTask.getEpicId()));
+            }
+            return true;
         }
-        subTask.setId(taskNumber);
-        subtaskHashMap.put(taskNumber, subTask);
-        List<Integer> epicSubtaskList = epicHashMap.get(subTask.getEpicId()).getSubTaskIds();
-        epicSubtaskList.add(taskNumber);
-        updateEpicStatus(subTask.getEpicId());
-        return true;
+        System.out.println("Даты не должны пересекаться, сабтакс не получилось создать.");
+        return false;
     }
 
     @Override
     public boolean createTask(Task task) {
-        int taskNumber = counterIncrease();
-        task.setId(taskNumber);
-        taskHashMap.put(taskNumber, task);
-        return true;
+        if (checkTaskDatesInstruction(task)) {
+            int taskNumber = counterIncrease();
+            task.setId(taskNumber);
+            taskHashMap.put(taskNumber, task);
+            return true;
+        }
+        System.out.println("Даты не должны пересекаться, сабтакс не получилось создать.");
+        return false;
     }
 
     @Override
@@ -222,5 +235,65 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<Task> getHistory() {
         return historyManager.getHistory();
+    }
+
+    @Override
+    public Optional<ArrayList<Task>> getPrioritizedTasks() {
+        ArrayList<Task> task = new ArrayList<>(taskHashMap.values());
+        ArrayList<Task> empty = new ArrayList<>();
+        for (Epic epic : epicHashMap.values()) {
+            if (epic.getStartTime() == null) {
+                empty.add(epic);
+            } else {
+                task.add(epic);
+            }
+        }
+
+        for (SubTask subTask : subtaskHashMap.values()) {
+            task.add(subTask);
+        }
+        task.sort(Task::compareTo);
+        for (Task task1 : empty) {
+            task.add(task1);
+        }
+        return Optional.of(task);
+    }
+
+    protected void EpicTimeEpdate(Epic epic) {
+        epic.setDuration(Duration.ofMinutes(0));
+        ArrayList<Integer> idSub = epic.getSubTaskIds();
+        for (int i : idSub) {
+            SubTask subTask = subtaskHashMap.get(i);
+
+            if (epic.getStartTime() == null) {
+                epic.setStartTime(subTask.getStartTime());
+                epic.setDuration(subTask.getDuration());
+                epic.setEndTime(subTask.getStartTime().plusMinutes(subTask.getDuration().getSeconds() * 60));
+                epicHashMap.put(epic.getId(), epic);
+            } else if (epic.getStartTime() != null) {
+                epic.setDuration(epic.getDuration().plusMinutes(subTask.getDuration().getSeconds() / 60));
+                epicHashMap.put(epic.getId(), epic);
+            }
+        }
+    }
+
+
+    private boolean checkTaskDatesInstruction(Task task) {
+        ArrayList<Task> chek = new ArrayList<>(taskHashMap.values());
+        for (SubTask subTask : subtaskHashMap.values()) {
+            chek.add(subTask);
+        }
+        Boolean bool = true;
+        for (Task task1 : chek) {
+            if (((task.getStartTime().isEqual(task1.getStartTime()) || task.getStartTime().isBefore(task1.getStartTime()))
+                    && (task.getEndTime().isEqual(task1.getEndTime()) || task.getEndTime().isAfter(task1.getStartTime())))
+                    || ((task.getStartTime().isEqual(task1.getStartTime()) || task.getStartTime().isBefore(task1.getEndTime()))
+                    && (task.getEndTime().isEqual(task1.getEndTime()) || task.getEndTime().isAfter(task1.getEndTime())))
+                    || (task.getStartTime().isBefore(task1.getStartTime()) && task.getEndTime().isAfter(task1.getEndTime()))
+                    || (task.getStartTime().isAfter(task1.getStartTime()) && task.getEndTime().isBefore(task1.getEndTime()))) {
+                bool = false;
+            }
+        }
+        return bool;
     }
 }
