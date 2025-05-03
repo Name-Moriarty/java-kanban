@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.TreeSet;
 
 public class InMemoryTaskManager implements TaskManager {
     private int taskNumber = 0;
@@ -100,7 +100,7 @@ public class InMemoryTaskManager implements TaskManager {
             taskHashMap.put(taskNumber, task);
             return true;
         }
-        System.out.println("Даты не должны пересекаться, сабтакс не получилось создать.");
+        System.out.println("Даты не должны пересекаться, такс не получилось создать.");
         return false;
     }
 
@@ -238,25 +238,20 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Optional<ArrayList<Task>> getPrioritizedTasks() {
-        ArrayList<Task> task = new ArrayList<>(taskHashMap.values());
-        ArrayList<Task> empty = new ArrayList<>();
+    public TreeSet<Task> getPrioritizedTasks() {
+        TreeSet<Task> sortList = new TreeSet<>(Task::compareTo);
+        for (Task task : taskHashMap.values()) {
+            sortList.add(task);
+        }
         for (Epic epic : epicHashMap.values()) {
-            if (epic.getStartTime() == null) {
-                empty.add(epic);
-            } else {
-                task.add(epic);
+            if (epic.getStartTime() != null) {
+                sortList.add(epic);
             }
         }
-
         for (SubTask subTask : subtaskHashMap.values()) {
-            task.add(subTask);
+            sortList.add(subTask);
         }
-        task.sort(Task::compareTo);
-        for (Task task1 : empty) {
-            task.add(task1);
-        }
-        return Optional.of(task);
+        return sortList;
     }
 
     protected void epicTimeEpdate(Epic epic) {
@@ -276,7 +271,6 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
     }
-
 
     private boolean checkTaskDatesInstruction(Task task) {
         ArrayList<Task> chek = new ArrayList<>(taskHashMap.values());

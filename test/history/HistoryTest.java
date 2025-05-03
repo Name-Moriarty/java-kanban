@@ -10,6 +10,9 @@ import task.SubTask;
 import task.Task;
 import task.TaskStatus;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -17,9 +20,9 @@ public class HistoryTest {
 
     private final TaskManager manager = new InMemoryTaskManager();
     private final HistoryManager historyManager = Managers.getDefaultHistory();
-    private final Task task = new Task("Первая задача", "Это наш первый тест", TaskStatus.NEW);
-    private final Task task1 = new Task("Первая задача", "Это наш первый тест", TaskStatus.NEW);
-    private final SubTask subTask1 = new SubTask("Первая задача", "Это наш первый тест", 3, TaskStatus.NEW);
+    private final Task task = new Task("Первая задача", "Это наш первый тест", TaskStatus.NEW, LocalDateTime.of(2003, 1, 1, 1, 15, 1), Duration.ofMinutes(200));
+    private final Task task1 = new Task("Первая задача", "Это наш первый тест", TaskStatus.NEW, LocalDateTime.of(2004, 1, 1, 1, 15, 1), Duration.ofMinutes(200));
+    private final SubTask subTask1 = new SubTask("Первая задача", "Это наш первый тест", 3, TaskStatus.NEW, LocalDateTime.of(2002, 1, 1, 1, 15, 1), Duration.ofMinutes(200));
     private final Epic epic1 = new Epic("Первая задача", "Это наш первый тест");
 
     @BeforeEach
@@ -30,7 +33,7 @@ public class HistoryTest {
         manager.createTask(subTask1);
     }
 
-   /* @Test
+    @Test
     public void historyManager() {
         assertEquals(InMemoryHistoryManager.class, historyManager.getClass());
     }
@@ -63,5 +66,12 @@ public class HistoryTest {
         manager.getTaskHashMap(2);
         manager.getEpicHashMap(3);
         assertNotNull(manager.getHistory());
-    }*/
+    }
+
+    @Test
+    public void testDubleHistoryTask(){
+        manager.getTaskHashMap(1);
+        manager.getTaskHashMap(1);
+        assertEquals(1,manager.getHistory().size());
+    }
 }

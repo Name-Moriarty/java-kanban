@@ -6,19 +6,24 @@ import task.SubTask;
 import task.Task;
 import task.TaskStatus;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ManagersTest {
     private final TaskManager manager = new InMemoryTaskManager();
     private final TaskManager managerFiles = Managers.getDefault();
-    private final Task task = new Task("Первая задача", "Это наш первый тест", TaskStatus.NEW);
+    private final Task task = new Task("Первая задача", "Это наш первый тест", TaskStatus.NEW, LocalDateTime.of(2002, 1, 1, 1, 15, 1), Duration.ofMinutes(200));
     private final Epic epic1 = new Epic("Первый эпик", "Это наш первый тест");
-    private final SubTask subTask1 = new SubTask("Первая подзадача", "Это наш первый тест", 2, TaskStatus.NEW);
-    private final Task task1 = new Task("Вторая задача", "Это наш первый тест", TaskStatus.NEW);
+    private final SubTask subTask1 = new SubTask("Первая подзадача", "Это наш первый тест", 2, TaskStatus.NEW, LocalDateTime.of(2006, 1, 1, 1, 0, 1), Duration.ofMinutes(60));
+    private final Task task1 = new Task("Вторая задача", "Это наш первый тест", TaskStatus.NEW, LocalDateTime.of(2004, 1, 1, 1, 15, 1), Duration.ofMinutes(200));
     private final Epic epic2 = new Epic("Второй эпик", "Это наш первый тест");
-    private final SubTask subTask2 = new SubTask("Вторая подзадача", "Это наш первый тест", 5, TaskStatus.NEW);
+    private final SubTask subTask2 = new SubTask("Вторая подзадача", "Это наш первый тест", 5, TaskStatus.NEW, LocalDateTime.of(2005, 1, 1, 1, 15, 1), Duration.ofMinutes(200));
+    private final SubTask subTask3 = new SubTask("Первая подзадача", "Это наш первый тест", 2, TaskStatus.NEW, LocalDateTime.of(2006, 1, 1, 2, 0, 1), Duration.ofMinutes(60));
 
     @Test
     public void managers() {
@@ -37,13 +42,13 @@ class ManagersTest {
         assertEquals(epic1, manager.getEpicHashMap(1));
     }
 
-   /* @Test
+    @Test
     void createSubtask() {
         assertTrue(manager.createTask(task));
         assertTrue(manager.createTask(epic1));
         assertTrue(manager.createTask(subTask1));
         assertEquals(subTask1, manager.getSubTaskHashMap(3));
-    }*/
+    }
 
     @Test
     public void testCounterIncrease() {
@@ -62,13 +67,13 @@ class ManagersTest {
         assertEquals(epic1, manager.getEpicHashMap(1));
     }
 
-   /* @Test
+    @Test
     public void testGetSubtask() {
         manager.createTask(task);
         manager.createTask(epic1);
         manager.createTask(subTask1);
         assertEquals(subTask1, manager.getSubTaskHashMap(3));
-    }*/
+    }
 
     @Test
     public void testDeleteTask() {
@@ -85,22 +90,22 @@ class ManagersTest {
         assertNull(manager.getEpicHashMap(1));
     }
 
-  /*  @Test
+    @Test
     public void testDeleteSubtask() {
         manager.createTask(task);
         manager.createTask(epic1);
         manager.createTask(subTask1);
         manager.taskDelete(3);
         assertNull(manager.getSubTaskHashMap(3));
-    }*/
+    }
 
- /*   @Test
+    @Test
     public void testDeleteAllTask() {
         manager.createTask(task);
         manager.createTask(task1);
         manager.deleteAllTask();
         assertTrue(manager.getListTask().isEmpty());
-    }*/
+    }
 
     @Test
     public void testDeleteAllEpic() {
@@ -110,7 +115,7 @@ class ManagersTest {
         assertTrue(manager.getListEpic().isEmpty());
     }
 
-  /*  @Test
+    @Test
     public void testDeleteAllSubtask() {
         manager.createTask(task);
         manager.createTask(epic1);
@@ -120,9 +125,9 @@ class ManagersTest {
         manager.createTask(subTask2);
         manager.deleteAllSubtask();
         assertTrue(manager.getListSubtask().isEmpty());
-    }*/
+    }
 
-  /*  @Test
+    @Test
     public void testStatusTask() {
         manager.createTask(task);
         manager.createTask(epic1);
@@ -137,9 +142,9 @@ class ManagersTest {
         assertEquals(TaskStatus.DONE, epic1.getStatus());
         manager.epicUpdate("Второй эпик выполнен", "Это наш первый тест", 5);
         assertEquals("Второй эпик выполнен", epic2.getTask());
-    }*/
+    }
 
-   /* @Test
+    @Test
     public void testGetTaskById() {
         manager.createTask(task);
         manager.createTask(epic1);
@@ -147,7 +152,24 @@ class ManagersTest {
         assertEquals(task, manager.getTaskHashMap(task.getId()));
         assertEquals(epic1, manager.getEpicHashMap(epic1.getId()));
         assertEquals(subTask1, manager.getSubTaskHashMap(subTask1.getId()));
-    }*/
+    }
+
+    @Test
+    public void ChecktheIntersectionOfTasks() {
+        manager.createTask(task);
+        assertFalse(manager.createTask(task));
+    }
+
+    @Test
+    public void CheckEpicTime() {
+        manager.createTask(task);
+        manager.createTask(epic1);
+        manager.createTask(subTask1);
+        manager.createTask(subTask3);
+        assertEquals(epic1.getStartTime(), subTask1.getStartTime());
+        assertEquals(epic1.getEndTime(), subTask3.getEndTime());
+
+    }
 }
 
 

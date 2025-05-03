@@ -16,9 +16,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private File file;
@@ -115,29 +113,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         } else System.out.println("Записи в файл еще не было");
         return fileBackedTaskManager;
     }
-
-    @Override
-    public Optional<ArrayList<Task>> getPrioritizedTasks() {
-        ArrayList<Task> task = new ArrayList<>(taskHashMap.values());
-        ArrayList<Task> empty = new ArrayList<>();
-        for (Epic epic : epicHashMap.values()) {
-            if (epic.getStartTime() == null) {
-                empty.add(epic);
-            } else {
-                task.add(epic);
-            }
-        }
-
-        for (SubTask subTask : subtaskHashMap.values()) {
-            task.add(subTask);
-        }
-        task.sort(Task::compareTo);
-        for (Task task1 : empty) {
-            task.add(task1);
-        }
-        return Optional.of(task);
-    }
-
 
     @Override
     public boolean createTask(Task task) {
