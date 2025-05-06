@@ -30,7 +30,7 @@ public class HistoryTest {
         manager.createTask(task);
         manager.createTask(task1);
         manager.createTask(epic1);
-        manager.createTask(subTask1);
+        manager.createSubtask(subTask1);
     }
 
     @Test
@@ -41,20 +41,19 @@ public class HistoryTest {
     @Test
     public void testAddHistory() {
         assertEquals(0, manager.getHistory().size());
-        manager.getTaskHashMap(1);
-        manager.getEpicHashMap(3);
-        manager.getSubTaskHashMap(4);
-        manager.getSubTaskHashMap(4);
+        manager.getTask(1);
+        manager.getEpic(3);
+        manager.getSubtask(4);
         assertEquals(3, manager.getHistory().size());
     }
 
     @Test
     public void removeTaskHistory() {
-        manager.getTaskHashMap(1);
-        manager.getTaskHashMap(2);
-        manager.getEpicHashMap(3);
-        manager.getSubTaskHashMap(4);
-        manager.getSubTaskHashMap(4);
+        manager.getTask(1);
+        manager.getTask(2);
+        manager.getEpic(3);
+        manager.getSubtask(4);
+        manager.getSubtask(4);
         manager.taskDelete(4);
         manager.createTask(subTask1);
         assertEquals(3, manager.getHistory().size());
@@ -62,16 +61,16 @@ public class HistoryTest {
 
     @Test
     public void testGetHistory() {
-        manager.getTaskHashMap(1);
-        manager.getTaskHashMap(2);
-        manager.getEpicHashMap(3);
+        manager.getTask(1);
+        manager.getTask(2);
+        manager.getEpic(3);
         assertNotNull(manager.getHistory());
     }
 
     @Test
-    public void testDubleHistoryTask(){
-        manager.getTaskHashMap(1);
-        manager.getTaskHashMap(1);
-        assertEquals(1,manager.getHistory().size());
+    public void testDubleHistoryTask() {
+        manager.getTask(1);
+        manager.getTask(1);
+        assertEquals(1, manager.getHistory().size());
     }
 }

@@ -19,7 +19,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
-    private File file;
+    final private File file;
+
+    public FileBackedTaskManager(File file) {
+        super();
+        this.file = file;
+    }
 
     public FileBackedTaskManager() {
         super();
@@ -43,18 +48,20 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 String name = subTask.toString();
                 files.write(name + "\n");
             }
-            files.write(" \n");
-            List<Task> copy = getHistory();
-            int i = 0;
-            if (copy != null) {
-                for (Task task : copy) {
-                    i++;
-                    if (copy.size() == i) {
-                        String str = String.valueOf(task.getId());
-                        files.write(str);
-                    } else {
-                        String str = String.valueOf(task.getId());
-                        files.write(str + ",");
+            if (!getHistory().isEmpty()) {
+                files.write(" \n");
+                List<Task> copy = getHistory();
+                int i = 0;
+                if (copy != null) {
+                    for (Task task : copy) {
+                        i++;
+                        if (copy.size() == i) {
+                            String str = String.valueOf(task.getId());
+                            files.write(str);
+                        } else {
+                            String str = String.valueOf(task.getId());
+                            files.write(str + ",");
+                        }
                     }
                 }
             }
@@ -63,10 +70,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
-    public static FileBackedTaskManager loadFromFile(File file) {
+    public static FileBackedTaskManager loadFromFile() {
         FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager();
-        if (file.isFile()) {
-            try (Reader reader = new FileReader(file);
+        if (fileBackedTaskManager.file.isFile()) {
+            try (Reader reader = new FileReader(fileBackedTaskManager.file);
                  BufferedReader br = new BufferedReader(reader)) {
                 while (br.ready()) {
                     String line = br.readLine();
@@ -77,10 +84,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                             Task task = new Task(lineSplit[2], lineSplit[4], TaskStatus.NEW, LocalDateTime.parse(lineSplit[5]), Duration.ofMinutes(Integer.parseInt(lineSplit[6])));
                             task.setId(Integer.parseInt(lineSplit[0]));
                             fileBackedTaskManager.taskHashMap.put(Integer.parseInt(lineSplit[0]), task);
+                            fileBackedTaskManager.listPrioritizedTasks.add(task);
+                            fileBackedTaskManager.counterIncrease();
                         } else if (type.equals(TaskType.EPIC.toString())) {
                             Epic epic = new Epic(lineSplit[2], lineSplit[4]);
                             epic.setId(Integer.parseInt(lineSplit[0]));
                             fileBackedTaskManager.epicHashMap.put(Integer.parseInt(lineSplit[0]), epic);
+                            fileBackedTaskManager.counterIncrease();
                         } else if (type.equals(TaskType.SUBTASK.toString())) {
                             SubTask subTask = new SubTask(lineSplit[2], lineSplit[4], Integer.parseInt(lineSplit[5]), TaskStatus.NEW, LocalDateTime.parse(lineSplit[6]), Duration.ofMinutes(Integer.parseInt(lineSplit[7])));
                             subTask.setId(Integer.parseInt(lineSplit[0]));
@@ -88,6 +98,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                             List<Integer> epicSubtaskList = fileBackedTaskManager.epicHashMap.get(subTask.getEpicId()).getSubTaskIds();
                             epicSubtaskList.add(Integer.parseInt(lineSplit[0]));
                             fileBackedTaskManager.epicTimeEpdate(fileBackedTaskManager.epicHashMap.get((Integer.parseInt(lineSplit[5]))));
+                            fileBackedTaskManager.listPrioritizedTasks.add(subTask);
+                            fileBackedTaskManager.counterIncrease();
                         } else {
                             if (lineSplit != null) {
                                 for (int i = lineSplit.length; i > 0; i--) {
@@ -129,48 +141,48 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public boolean createTask(SubTask subTask) {
-        boolean createStatus = super.createTask(subTask);
+    public boolean createSubtask(SubTask subTask) {
+        boolean createStatus = super.createSubtask(subTask);
         save();
         return createStatus;
     }
 
     @Override
-    public Epic getEpicHashMap(int key) {
-        Epic epic = super.getEpicHashMap(key);
+    public Epic getEpic(int key) {
+        Epic epic = super.getEpic(key);
         save();
         return epic;
     }
 
     @Override
-    public Task getTaskHashMap(int key) {
-        Task task = super.getTaskHashMap(key);
+    public Task getTask(int key) {
+        Task task = super.getTask(key);
         save();
         return task;
     }
 
     @Override
-    public SubTask getSubTaskHashMap(int key) {
-        SubTask subTask = super.getSubTaskHashMap(key);
+    public SubTask getSubtask(int key) {
+        SubTask subTask = super.getSubtask(key);
         save();
         return subTask;
     }
 
     @Override
-    public void epicUpdate(String task, String taskDescription, int taskNumber) {
-        super.epicUpdate(task, taskDescription, taskNumber);
+    public void epicUpdate(Epic epic) {
+        super.epicUpdate(epic);
         save();
     }
 
     @Override
-    public void subTaskUpdate(String task, String description, int subtaskId, TaskStatus status) {
-        super.subTaskUpdate(task, description, subtaskId, status);
+    public void subTaskUpdate(SubTask subTask) {
+        super.subTaskUpdate(subTask);
         save();
     }
 
     @Override
-    public void taskUpdate(String task, String description, TaskStatus status, int idTusk) {
-        super.taskUpdate(task, description, status, idTusk);
+    public void taskUpdate(Task task) {
+        super.taskUpdate(task);
         save();
     }
 }

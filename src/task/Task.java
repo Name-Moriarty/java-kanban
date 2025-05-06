@@ -71,7 +71,7 @@ public class Task implements Comparable<Task> {
     }
 
     public LocalDateTime getEndTime() {
-        return startTime.plusMinutes(duration.getSeconds() / 60);
+        return startTime.plus(duration);
     }
 
     public Duration getDuration() {
@@ -88,6 +88,15 @@ public class Task implements Comparable<Task> {
 
     public void setDuration(Duration duration) {
         this.duration = duration;
+    }
+
+    public boolean taskCheckTime(Task task) {
+        return this.getEndTime().isBefore(task.startTime) ||
+                task.getEndTime().isBefore(this.startTime);
+    }
+
+    public boolean checkingTheIdentityOfDates(Task task) {
+        return (this.startTime.equals(task.startTime) && this.duration.equals(task.duration));
     }
 
     @Override
