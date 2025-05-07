@@ -265,8 +265,8 @@ public class InMemoryTaskManager implements TaskManager {
     private boolean checkTaskDatesInstruction(Task task) {
         boolean taskCheck = getListTask().stream()
                 .allMatch(task1 -> task1.taskCheckTime(task));
-        Boolean subTaskCheck = getListSubtask().stream().
-                allMatch(task1 -> task1.taskCheckTime(task));
+        Boolean subTaskCheck = getListSubtask().stream()
+                .allMatch(task1 -> task1.taskCheckTime(task));
         return taskCheck && subTaskCheck;
     }
 }
