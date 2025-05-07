@@ -57,7 +57,7 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         manager.createTask(epic1);
         manager.createSubtask(subtask1);
         manager.createSubtask(subtask2);
-        assertEquals(manager.listPrioritizedTasks.first(), subtask2);
+        assertEquals(manager.getPrioritizedTasks().first(), subtask2);
     }
 }
 

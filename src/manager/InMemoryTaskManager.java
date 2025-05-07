@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -20,7 +21,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected final Map<Integer, Task> taskHashMap = new HashMap<>();
     protected final Map<Integer, Epic> epicHashMap = new HashMap<>();
     protected final Map<Integer, SubTask> subtaskHashMap = new HashMap<>();
-    protected TreeSet<Task> listPrioritizedTasks = new TreeSet<>(Task::compareTo);
+    protected Set<Task> listPrioritizedTasks = new TreeSet<>(Task::compareTo);
     protected final HistoryManager historyManager = Managers.getDefaultHistory();
 
     @Override
@@ -246,7 +247,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public TreeSet<Task> getPrioritizedTasks() {
-        return listPrioritizedTasks;
+        return new TreeSet<>(listPrioritizedTasks);
     }
 
     protected void epicTimeEpdate(Epic epic) {
@@ -262,8 +263,10 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private boolean checkTaskDatesInstruction(Task task) {
-        boolean taskCheck = getListTask().stream().allMatch(task1 -> task1.taskCheckTime(task));
-        Boolean subTaskCheck = getListSubtask().stream().allMatch(task1 -> task1.taskCheckTime(task));
+        boolean taskCheck = getListTask().stream()
+                .allMatch(task1 -> task1.taskCheckTime(task));
+        Boolean subTaskCheck = getListSubtask().stream().
+                allMatch(task1 -> task1.taskCheckTime(task));
         return taskCheck && subTaskCheck;
     }
 }

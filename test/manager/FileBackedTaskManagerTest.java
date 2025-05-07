@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FileBackedTaskManagerTest {
 
     private FileBackedTaskManager managerFiles;
-    File file;
+    private File file;
     private final Task task = new Task("Первая задача", "Это наш первый тест", TaskStatus.NEW, LocalDateTime.of(2002, 1, 1, 1, 15, 1), Duration.ofMinutes(200));
 
     @BeforeEach

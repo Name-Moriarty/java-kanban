@@ -183,7 +183,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     public void testStatusTaskInProgress() {
         manager.createTask(task);
-        task2 = task;
         task.setStatus(TaskStatus.IN_PROGRESS);
         manager.taskUpdate(task);
         assertEquals(TaskStatus.IN_PROGRESS, manager.getTask(1).getStatus());
@@ -192,7 +191,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     public void testStatusTaskDone() {
         manager.createTask(task);
-        task2 = task;
         task.setStatus(TaskStatus.DONE);
         manager.taskUpdate(task);
         assertEquals(TaskStatus.DONE, manager.getTask(1).getStatus());
