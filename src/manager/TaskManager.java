@@ -1,13 +1,11 @@
 package manager;
 
-
 import task.Epic;
 import task.SubTask;
 import task.Task;
-import task.TaskStatus;
 
 import java.util.List;
-
+import java.util.TreeSet;
 
 public interface TaskManager {
 
@@ -27,26 +25,28 @@ public interface TaskManager {
 
     boolean createTask(Epic epic);
 
-    boolean createTask(SubTask subtask);
+    boolean createSubtask(SubTask subtask);
 
     boolean createTask(Task task);
 
-    void epicUpdate(String task, String description, int idTusk);
+    void epicUpdate(Epic epic);
 
-    void subTaskUpdate(String name, String description, int epicId, TaskStatus status);
+    void subTaskUpdate(SubTask subTask);
 
-    void taskUpdate(String task, String description, TaskStatus status, int idTusk);
+    void taskUpdate(Task task);
 
     void taskDelete(int key);
 
     List<SubTask> getEpicSubTasksList(int key);
 
-    Epic getEpicHashMap(int key);
+    Epic getEpic(int key);
 
-    Task getTaskHashMap(int key);
+    Task getTask(int key);
 
-    SubTask getSubTaskHashMap(int key);
+    SubTask getSubtask(int key);
 
     List<Task> getHistory();
+
+    TreeSet<Task> getPrioritizedTasks();
 }
 

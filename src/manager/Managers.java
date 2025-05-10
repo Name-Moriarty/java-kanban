@@ -3,11 +3,14 @@ package manager;
 import history.HistoryManager;
 import history.InMemoryHistoryManager;
 
-import java.io.File;
+public class Managers {
 
-public abstract class Managers {
+    private Managers() {
+
+    }
+
     public static TaskManager getDefault() {
-        return FileBackedTaskManager.loadFromFile(new File("C:\\Users\\dvoeg\\IdeaProjects\\java-kanban-7-sprint", "DataSave.csv"));
+        return FileBackedTaskManager.loadFromFile();
     }
 
     public static HistoryManager getDefaultHistory() {
