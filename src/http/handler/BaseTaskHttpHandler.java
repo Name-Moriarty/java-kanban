@@ -27,7 +27,7 @@ abstract class BaseTaskHttpHandler extends BaseHttpHandler implements HttpHandle
 
     abstract void getHandle(HttpExchange exchange) throws IOException;
 
-    abstract void postHandle(HttpExchange exchange);
+    abstract void postHandle(HttpExchange exchange) throws IOException;
 
-    abstract void deleteHandle(HttpExchange exchange);
+    abstract void deleteHandle(HttpExchange exchange) throws IOException;
 }

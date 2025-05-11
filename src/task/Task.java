@@ -13,8 +13,8 @@ public class Task implements Comparable<Task> {
     protected TaskStatus status;
     protected int id;
     protected TaskType type;
-    protected Duration duration;
-    protected LocalDateTime startTime;
+    protected Duration duration = null;
+    protected LocalDateTime startTime = null;
 
     public Task(String task, String description, TaskStatus status, LocalDateTime startTime, Duration duration) {
         this.task = task;

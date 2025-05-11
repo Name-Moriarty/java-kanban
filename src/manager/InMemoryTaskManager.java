@@ -111,30 +111,42 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void epicUpdate(Epic epic) {
+    public boolean epicUpdate(Epic epic) {
         if (epicHashMap.containsKey(epic.getId())) {
             epicHashMap.put(epic.getId(), epic);
-        } else System.out.println("Задача с таким ид не найдена");
+            return true;
+        } else {
+            System.out.println("Задача с таким ид не найдена");
+            return false;
+        }
     }
 
     @Override
-    public void subTaskUpdate(SubTask subTask) {
+    public boolean subTaskUpdate(SubTask subTask) {
         if (subtaskHashMap.containsKey(subTask.getId()) && subtaskHashMap.get(subTask.getId()).checkingTheIdentityOfDates(subTask) || checkTaskDatesInstruction(subTask)) {
             listPrioritizedTasks.remove(subtaskHashMap.get(subTask.getId()));
             subtaskHashMap.put(subTask.getId(), subTask);
             updateEpicStatus(subTask.getEpicId());
             epicTimeEpdate(epicHashMap.get(subTask.getEpicId()));
             listPrioritizedTasks.add(subTask);
-        } else System.out.println("Подзадача с таким ид не найдена или пересекается по времени с другими задачами");
+            return true;
+        } else {
+            System.out.println("Подзадача с таким ид не найдена или пересекается по времени с другими задачами");
+            return false;
+        }
     }
 
     @Override
-    public void taskUpdate(Task task) {
+    public boolean taskUpdate(Task task) {
         if (taskHashMap.containsKey(task.getId()) && checkTaskDatesInstruction(task)) {
             listPrioritizedTasks.remove(taskHashMap.get(task.getId()));
             taskHashMap.put(task.getId(), task);
             listPrioritizedTasks.add(task);
-        } else System.out.println("Задача с таким ид не найдена или пересекается по времени с другими задачами");
+            return true;
+        } else {
+            System.out.println("Задача с таким ид не найдена или пересекается по времени с другими задачами");
+            return false;
+        }
     }
 
     @Override
