@@ -22,7 +22,10 @@ public class EpicHandler extends BaseTaskHttpHandler {
             sendText(exchange, jsonString);
         } else {
             Epic epic = manager.getEpic(id);
-            if (epic != null) {
+            String[] pathParts = exchange.getRequestURI().getPath().split("/");
+            if (epic != null && pathParts.length > 3 && pathParts[3].equals("subtasks")) {
+                sendText(exchange, gson.toJson(manager.getEpicSubTasksList(id)));
+            } else if (epic != null && pathParts.length <= 3) {
                 sendText(exchange, gson.toJson(epic));
             } else {
                 sendNotFound(exchange);
