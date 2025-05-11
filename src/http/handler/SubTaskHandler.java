@@ -3,7 +3,6 @@ package http.handler;
 import com.sun.net.httpserver.HttpExchange;
 import manager.TaskManager;
 import task.SubTask;
-import task.Task;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -41,8 +40,7 @@ public class SubTaskHandler extends BaseTaskHttpHandler {
             if (isUpdated) {
                 exchange.sendResponseHeaders(200, 0);
                 exchange.close();
-            }
-            else {
+            } else {
                 sendHasInteractions(exchange);
             }
         } else {
