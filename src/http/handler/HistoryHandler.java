@@ -1,8 +1,11 @@
 package http.handler;
 
+import com.sun.net.httpserver.HttpExchange;
 import manager.TaskManager;
 
-public class HistoryHandler extends BaseHistoryHttpHandler{
+import java.io.IOException;
+
+public class HistoryHandler extends BaseHistoryHttpHandler {
 
     private final TaskManager manager;
 
@@ -11,7 +14,8 @@ public class HistoryHandler extends BaseHistoryHttpHandler{
     }
 
     @Override
-    void getHandle() {
-
+    void getHandle(HttpExchange exchange) throws IOException {
+        String jsonString = gson.toJson(manager.getHistory());
+        sendText(exchange, jsonString);
     }
 }
